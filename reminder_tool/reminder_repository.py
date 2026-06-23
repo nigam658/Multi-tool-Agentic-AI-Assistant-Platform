@@ -49,7 +49,7 @@ def get_user_reminders(user_id):
             target_price
         FROM reminders
         WHERE user_id = %s
-        """,
+        """, 
         (user_id,)
     )
 
@@ -110,3 +110,71 @@ def delete_reminder(reminder_id):
     conn.close()
 
     return True
+
+# take only these rows where status os active
+def get_active_reminders():
+
+    conn = get_mysql()
+
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT *
+        FROM reminders
+        WHERE status = 'active'
+    """
+    )
+
+    reminders = cursor.fetchall()
+    cursor.close() 
+    conn.close() 
+    return reminders
+
+def update_status_reminder(reminder_id):
+    conn = get_mysql()
+
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        UPDATE reminders
+        SET status = 'inactive'
+        WHERE id = %s
+    """,
+    (reminder_id,)
+    )
+
+    conn.commit()
+
+    cursor.close()
+    conn.close()
+
+    return True
+
+
+from database import get_mysql
+
+
+def get_user_email(user_id: int):
+
+    conn = get_mysql()
+
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute(
+        """
+        SELECT email
+        FROM users
+        WHERE id = %s
+        """,
+        (user_id,)
+    )
+
+    user = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    if not user:
+        return None
+
+    return user["email"]

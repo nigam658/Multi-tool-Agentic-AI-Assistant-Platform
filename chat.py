@@ -1,18 +1,31 @@
-from fastapi import FastAPI
+from fastapi import APIRouter
 from pydantic import BaseModel
 
-from agent import Agent 
+from routers.agent import Agent 
+from auth.jwt_handler import verify_token
 
-
-app = FastAPI()
+router = APIRouter()
 
 class ChatRequest(BaseModel):
-    conversation_id: str
+    token: str
     message: str
 
-@app.post("/chat")
+@router.post("/chat")
 def chat(request:ChatRequest):
-    response = Agent(request.conversation_id, request.message)
+    payload = verify_token(
+        request.token
+    )
+
+    if not payload:
+        return {
+            "success": False,
+            "message": "Unauthorized"
+        }
+    
+    user_id = payload["user_id"]
+
+
+    response = Agent(user_id, request.message)
     
     return {"response": response}
 

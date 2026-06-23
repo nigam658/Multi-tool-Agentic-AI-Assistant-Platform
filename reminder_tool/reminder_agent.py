@@ -1,6 +1,7 @@
 from session_manager import sessions
-from reminder_tool.reminder_service import (detect_reminder_action, createReminder, updateReminder, deleteReminder, listReminders)
+from reminder_tool.reminder_service import (createReminder, updateReminder, deleteReminder, listReminders)
 from reminder_tool.reminder_repository import update_reminder_price, delete_reminder
+from reminder_tool.reminder_ai_services import detect_reminder_action
 
 ACTIONS = {
     "create": createReminder,
@@ -9,9 +10,9 @@ ACTIONS = {
     "list": listReminders
 }
 
-def reminderAgent(conversation_id: str, message: str):
+def reminderAgent(user_id: str, message: str):
 
-    session = sessions.get(conversation_id)
+    session = sessions.get(user_id)
 
     if session:
 
@@ -38,9 +39,9 @@ def reminderAgent(conversation_id: str, message: str):
 
             selected_reminder = reminders[choice - 1]
 
-            sessions[conversation_id]["reminder_id"] = selected_reminder["id"]
+            sessions[user_id]["reminder_id"] = selected_reminder["id"]
 
-            sessions[conversation_id]["step"] = "waiting_for_new_price"
+            sessions[user_id]["step"] = "waiting_for_new_price"
 
             return {
                 "success": True,
@@ -64,9 +65,9 @@ def reminderAgent(conversation_id: str, message: str):
                     "message": "Please enter a valid price."
                 }
 
-            sessions[conversation_id]["new_price"] = new_price
+            sessions[user_id]["new_price"] = new_price
 
-            sessions[conversation_id]["step"] = "waiting_for_confirmation"
+            sessions[user_id]["step"] = "waiting_for_confirmation"
 
             return {
                 "success": True,
@@ -94,7 +95,7 @@ def reminderAgent(conversation_id: str, message: str):
                         new_price
                     )
 
-                    del sessions[conversation_id]
+                    del sessions[user_id]
 
                     return {
                         "success": True,
@@ -110,7 +111,7 @@ def reminderAgent(conversation_id: str, message: str):
 
             if answer == "no":
 
-                del sessions[conversation_id]
+                del sessions[user_id]
 
                 return {
                     "success": True,
@@ -145,9 +146,9 @@ def reminderAgent(conversation_id: str, message: str):
 
             selected_reminder = reminders[choice - 1]
 
-            sessions[conversation_id]["reminder_id"] = selected_reminder["id"]
+            sessions[user_id]["reminder_id"] = selected_reminder["id"]
 
-            sessions[conversation_id]["step"] = "waiting_for_delete_confirmation"
+            sessions[user_id]["step"] = "waiting_for_delete_confirmation"
 
             return {
                 "success": True,
@@ -169,7 +170,7 @@ def reminderAgent(conversation_id: str, message: str):
                         session["reminder_id"]
                     )
 
-                    del sessions[conversation_id]
+                    del sessions[user_id]
 
                     return {
                         "success": True,
@@ -187,7 +188,7 @@ def reminderAgent(conversation_id: str, message: str):
 
             if answer == "no":
 
-                del sessions[conversation_id]
+                del sessions[user_id]
 
                 return {
                     "success": True,
@@ -208,6 +209,6 @@ def reminderAgent(conversation_id: str, message: str):
         }
 
     return ACTIONS[action](
-    conversation_id,
+    user_id,
     message
     )
