@@ -25,6 +25,19 @@ def create_access_token(user_id: int):
 
     return token
 
+def create_refresh_token(user_id: int):
+
+    payload = {
+        "user_id": user_id,
+        "type": "refresh",
+        "exp": datetime.now(timezone.utc) + timedelta(days=7)
+    }
+
+    return jwt.encode(
+        payload,
+        SECRET_KEY,
+        algorithm=ALGORITHM
+    )
 
 def verify_token(token: str):
 

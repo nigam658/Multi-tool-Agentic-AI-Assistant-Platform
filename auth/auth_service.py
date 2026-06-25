@@ -1,5 +1,6 @@
 from passlib.context import CryptContext
 import re
+import random
 
 pwd_context = CryptContext(
     schemes=["bcrypt"],
@@ -37,3 +38,6 @@ def validate_password(password: str):
         return "Password must contain at least one special character."
 
     return None
+
+def generate_otp():
+    return str(random.randint(100000, 999999))

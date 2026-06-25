@@ -1,4 +1,3 @@
-import json
 from ai_client import client
 
 from reminder_tool.reminder_repository import save_reminder, get_user_reminders
@@ -6,11 +5,21 @@ from session_manager import sessions
 from reminder_tool.reminder_ai_services import extract_reminder_data
 
 
-
 def createReminder(user_id, message:str):
     reminder_data = extract_reminder_data(message)
     print(reminder_data)
 
+    if not reminder_data["product_url"]:
+        return {
+            "success": False,
+            "message": "Please provide the product URL with target price."
+        }
+
+    if not reminder_data["target_price"]:
+        return {
+            "success": False,
+            "message": "Please provide the target price with product url."
+        }
 
     reminder_id = save_reminder(
         user_id,
