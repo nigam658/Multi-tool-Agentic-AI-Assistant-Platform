@@ -36,7 +36,6 @@ PyJWT==2.13.0
 python-dotenv==1.2.2
 python-jose==3.5.0
 python-multipart==0.0.30
-pywin32==311
 referencing==0.37.0
 requests==2.34.2
 rpds-py==2026.5.1
