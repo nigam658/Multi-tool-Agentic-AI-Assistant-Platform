@@ -1,8 +1,12 @@
 import json
 from ai_client import client
+from dotenv import load_dotenv
 
 import smtplib
 import os
+
+load_dotenv()
+
         
 def generate_email_draft(message: str):
 
